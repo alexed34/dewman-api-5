@@ -92,9 +92,9 @@ def main():
     all_languages_stat_HH = {}
     for programming_language in programming_languages:
         all_languages_stat_SJ[programming_language] = predict_rub_salary_for_SuperJob(programming_language)
-        #all_languages_stat_HH[programming_language] = predict_rub_salary_hh(programming_language)
+        all_languages_stat_HH[programming_language] = predict_rub_salary_hh(programming_language)
     print(create_table_consol(all_languages_stat_SJ, 'SuperJob Moscow'))
-    #print(create_table_consol(all_languages_stat_HH, 'HeadHunter Moscow'))
+    print(create_table_consol(all_languages_stat_HH, 'HeadHunter Moscow'))
 
 
 if __name__ == '__main__':
