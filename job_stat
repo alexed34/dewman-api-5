@@ -1,5 +1,9 @@
 import requests
 from terminaltables import AsciiTable
+from dotenv import load_dotenv
+import os
+
+
 
 
 def get_request(url, params, headers):
@@ -19,10 +23,11 @@ def predict_salary(salary_from, salary_to):
 
 
 def predict_rub_salary_for_SuperJob(vacancy):
+    superjob_key = os.getenv('SUPERJOB_KEY')
     url = 'https://api.superjob.ru/2.0/vacancies/'
     params = {'keyword': vacancy, 'count': 1, 'town': 4, 'catalogues': 48, 'page': 0}
     headers = {
-        'X-Api-App-Id': 'v3.r.131389760.063d0996c4850f4be0f6ba6ee363ea55af14ec7a.935c128e7e4f53fb85a51269278ba78a44cc9699'}
+        'X-Api-App-Id': superjob_key}
     response_vacancy = get_request(url, params, headers)
     count_vacancy = response_vacancy.get('total')
     language_data = []
@@ -79,6 +84,7 @@ def create_table_consol(data, title):
 
 
 def main():
+    load_dotenv()
     programming_languages = ['Python', 'C', 'C++', 'Java',
                              'JavaScript', 'PHP', 'C#', 'Swift',
                              'Perl', '1C']
@@ -86,9 +92,9 @@ def main():
     all_languages_stat_HH = {}
     for programming_language in programming_languages:
         all_languages_stat_SJ[programming_language] = predict_rub_salary_for_SuperJob(programming_language)
-        # all_languages_stat_HH[programming_language] = predict_rub_salary_hh(programming_language)
+        #all_languages_stat_HH[programming_language] = predict_rub_salary_hh(programming_language)
     print(create_table_consol(all_languages_stat_SJ, 'SuperJob Moscow'))
-    print(create_table_consol(all_languages_stat_SJ, 'HeadHunter Moscow'))
+    #print(create_table_consol(all_languages_stat_HH, 'HeadHunter Moscow'))
 
 
 if __name__ == '__main__':
