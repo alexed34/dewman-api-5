@@ -7,6 +7,13 @@
 Python 3 должен быть уже установлен. Затем используйте pip (или pip3, если есть конфликт с Python2) для установки зависимостей:
 
  ```pip install -r requirements.txt```
+ 
+Для сайта [superjob.ru](https://superjob.ru) требуется ключ (v3.r.131389760.063d0996c48xxxxxxxxxxxxxxxa55af14ec7a.935c12xxxxxxxxxxxxx4cc8968). 
+
+Для получения ключа требуется зарегестрироватся на сайте [superjob.ru](https://superjob.ru). 
+
+Запишите в файл .env ключ SUPERJOB_KEY=ваш_ключ
+
 
 ## Цели проекта
 Код написан для образовательных целей на онлайн-курсе для веб-разработчиков [dvmn.org](https://dvmn.org) .
