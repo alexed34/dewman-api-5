@@ -1,0 +1,55 @@
+Раз уж вы забраковали мою конструкцию len(list(filter(None, language_data)) которая мне очень нравилась,
+посоветуйте каким способом лучше очистить список от None, я написал два варианта. 
+1 через генератор
+2 через if
+Который способ на ваш взгляд предпочтительнее?
+
+
+# 1 способ
+def predict_rub_salary_for_SuperJob(vacancy):
+    url = 'https://api.superjob.ru/2.0/vacancies/'
+    params = {'keyword': vacancy, 'count': 1, 'town': 4, 'catalogues': 48, 'page': 0}
+    headers = {
+        'X-Api-App-Id': 'v3.r.131389760.063d0996c4850f4be0f6ba6ee363ea55af14ec7a.935c128e7e4f53fb85a51269278ba78a44cc9699'}
+    response_vacancy = get_request(url, params, headers)
+    count_vacancy = response_vacancy.get('total')
+    language_data = []
+    for i in range(count_vacancy // 100 + 1):
+        params = {'keyword': vacancy, 'count': 10, 'town': 4, 'catalogues': 48, 'page': i}
+        for i in get_request(url, params, headers).get('objects'):
+            if i.get('currency') == 'rub':
+                # print(f"{i.get('profession')}, {i.get('town').get('title')}, {predict_salary(i.get('payment_from'), i.get('payment_to'))} ")
+                language_data.append(predict_salary(i.get('payment_from'), i.get('payment_to')))
+
+# 1й способ убрать None
+    language_data = [number for number in language_data if number != None]
+
+    language = {"vacancies_found": count_vacancy, "vacancies_processed": len(language_data),
+                "average_salary": int(
+                    int(sum(language_data)) / len(language_data))}
+    return language
+                    
+№2 способ
+def predict_rub_salary_for_SuperJob(vacancy):
+    url = 'https://api.superjob.ru/2.0/vacancies/'
+    params = {'keyword': vacancy, 'count': 1, 'town': 4, 'catalogues': 48, 'page': 0}
+    headers = {
+        'X-Api-App-Id': 'v3.r.131389760.063d0996c4850f4be0f6ba6ee363ea55af14ec7a.935c128e7e4f53fb85a51269278ba78a44cc9699'}
+    response_vacancy = get_request(url, params, headers)
+    count_vacancy = response_vacancy.get('total')
+    language_data = []
+    for i in range(count_vacancy // 100 + 1):
+        params = {'keyword': vacancy, 'count': 10, 'town': 4, 'catalogues': 48, 'page': i}
+        for i in get_request(url, params, headers).get('objects'):
+            if i.get('currency') == 'rub':
+# 2й способ убрать None            
+                if predict_salary(i.get('payment_from'), i.get('payment_to')):
+                    language_data.append(predict_salary(i.get('payment_from'), i.get('payment_to')))
+
+
+    language = {"vacancies_found": count_vacancy, "vacancies_processed": len(language_data),
+                "average_salary": int(
+                    int(sum(language_data)) / len(language_data))}
+
+    return language
+ 
