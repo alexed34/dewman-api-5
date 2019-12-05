@@ -25,8 +25,7 @@ def predict_salary(salary_from, salary_to):
 def predict_rub_salary_for_SuperJob(vacancy, superjob_key):
     url = 'https://api.superjob.ru/2.0/vacancies/'
     params = {'keyword': vacancy, 'count': 1, 'town': 4, 'catalogues': 48, 'page': 0}
-    headers = {
-        'X-Api-App-Id': superjob_key}
+    headers = {'X-Api-App-Id': superjob_key}
     response_vacancy = get_request(url, params, headers)
     count_vacancy = response_vacancy.get('total')
     language_data = []
@@ -35,9 +34,9 @@ def predict_rub_salary_for_SuperJob(vacancy, superjob_key):
         for salary in get_request(url, params, headers).get('objects'):
             if salary.get('currency') == 'rub':
                 language_data.append(predict_salary(salary.get('payment_from'), salary.get('payment_to')))
-    language = {"vacancies_found": count_vacancy, "vacancies_processed": len(list(filter(None, language_data))),
-                "average_salary": int(
-                    int(sum(list(filter(None, language_data)))) / len(list(filter(None, language_data))))}
+    language_data = [number for number in language_data if number != None]            
+    language = {"vacancies_found": count_vacancy, "vacancies_processed": len(language_data),
+                "average_salary": int(sum(language_data) / len(language_data))}
     return language
 
 
