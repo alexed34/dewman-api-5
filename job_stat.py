@@ -22,8 +22,7 @@ def predict_salary(salary_from, salary_to):
         return (salary_to - salary_from) / 2 + salary_from
 
 
-def predict_rub_salary_for_SuperJob(vacancy):
-    superjob_key = os.getenv('SUPERJOB_KEY')
+def predict_rub_salary_for_SuperJob(vacancy, superjob_key):
     url = 'https://api.superjob.ru/2.0/vacancies/'
     params = {'keyword': vacancy, 'count': 1, 'town': 4, 'catalogues': 48, 'page': 0}
     headers = {
@@ -31,12 +30,11 @@ def predict_rub_salary_for_SuperJob(vacancy):
     response_vacancy = get_request(url, params, headers)
     count_vacancy = response_vacancy.get('total')
     language_data = []
-    for i in range(count_vacancy // 100 + 1):
-        params = {'keyword': vacancy, 'count': 100, 'town': 4, 'catalogues': 48, 'page': i}
-        for i in get_request(url, params, headers).get('objects'):
-            if i.get('currency') == 'rub':
-                # print(f"{i.get('profession')}, {i.get('town').get('title')}, {predict_salary(i.get('payment_from'), i.get('payment_to'))} ")
-                language_data.append(predict_salary(i.get('payment_from'), i.get('payment_to')))
+    for page in range(count_vacancy // 100 + 1):
+        params = {'keyword': vacancy, 'count': 100, 'town': 4, 'catalogues': 48, 'page': page}
+        for salary in get_request(url, params, headers).get('objects'):
+            if salary.get('currency') == 'rub':
+                language_data.append(predict_salary(salary.get('payment_from'), salary.get('payment_to')))
     language = {"vacancies_found": count_vacancy, "vacancies_processed": len(list(filter(None, language_data))),
                 "average_salary": int(
                     int(sum(list(filter(None, language_data)))) / len(list(filter(None, language_data))))}
@@ -85,13 +83,14 @@ def create_table_consol(data, title):
 
 def main():
     load_dotenv()
+    superjob_key = os.getenv('SUPERJOB_KEY')
     programming_languages = ['Python', 'C', 'C++', 'Java',
                              'JavaScript', 'PHP', 'C#', 'Swift',
                              'Perl', '1C']
     all_languages_stat_SJ = {}
     all_languages_stat_HH = {}
     for programming_language in programming_languages:
-        all_languages_stat_SJ[programming_language] = predict_rub_salary_for_SuperJob(programming_language)
+        all_languages_stat_SJ[programming_language] = predict_rub_salary_for_SuperJob(programming_language, superjob_key)
         all_languages_stat_HH[programming_language] = predict_rub_salary_hh(programming_language)
     print(create_table_consol(all_languages_stat_SJ, 'SuperJob Moscow'))
     print(create_table_consol(all_languages_stat_HH, 'HeadHunter Moscow'))
