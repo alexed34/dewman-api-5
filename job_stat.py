@@ -65,14 +65,14 @@ def predict_rub_salary_hh(vacancy):
     return language
 
 
-def create_table_consol(data, title):
+def create_table_consol(all_languages_stat, title):
     table_data = [
         ['Язык програмирование', 'Вакансий найдено', 'Вакансий обработано', 'Средняя зарплата'],
     ]
-    for language in data:
+    for language in all_languages_stat:
         row = []
         row.append(language)
-        values = data.get(language)
+        values = all_languages_stat.get(language)
         for value in values:
             row.append(values.get(value))
         table_data.append(row)
